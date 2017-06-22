@@ -1,0 +1,12 @@
+# '#' is for comments, don't use # in key or value
+{
+    # LOG_NONE, LOG_INFO, LOG_WARN, LOG_ERROR, lower log level will take effect if higher log level is set, use LOG_NONE to shut off logging system
+    # LOG_NONE = 0, LOG_INFO = 1, LOG_WARN = 2, LOG_ERROR = 3
+    "log_level": 3,
+    # log tags, useful in debugging. if 'all' is contained or no tags specified, all tags will take effect
+    # tags are case insensitive, e.g. SSH or Ssh will be convert to ssh
+    # there is a default tag named charles-logging. don't use it.
+    "log_tags": [], # you can also comment here
+    "log_dir": "../log", # log directory, default is ../log
+    "process_name": "charles-server-logging" # process_name is use in prefix of log name, if not given, name will be extrat from environment
+}
