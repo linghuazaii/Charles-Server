@@ -173,7 +173,7 @@ void do_close(void *arg) {
     }
 }
 
-int get_socket_buffer_length(int fd) {
+int get_socket_read_buffer_length(int fd) {
     int length = 0;
     int ret = ioctl(fd, FIONREAD, &length);
     if (ret == -1) {
@@ -184,14 +184,19 @@ int get_socket_buffer_length(int fd) {
     return length;
 }
 
+int get_socket_write_buffer_length(int fd) {
+	int length = 0;
+	
+}
+
 void do_read(void *arg) {
     xlog("enter do_read");
     ep_data_t *data = (ep_data_t *)arg;
     //while (true) {
-        int length = get_socket_buffer_length(data->eventfd);
+        int length = get_socket_read_buffer_length(data->eventfd);
         xlog("buffer length: %d", length);
         if (length == 0 || length == -1) {
-            //do_close(data);
+            do_close(data);
         //    break;
             return;
         }
@@ -278,7 +283,7 @@ void event_loop() {
                 }
                 if (events[i].events & EPOLLERR | events[i].events & EPOLLHUP) {
                     xlog("close event.");
-                    threadpool_add(charles_server->error_threadpool, do_close, events[i].data.ptr, 0);
+                    //threadpool_add(charles_server->error_threadpool, do_close, events[i].data.ptr, 0);
                 }
             }
         }

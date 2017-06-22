@@ -9,7 +9,10 @@ void request_handler(void *req) {
     while (true) { /* packets event may be combined in epoll */
         int length = *((int *)data->buffer + count);
         xlog("data length => %d", length);
-        reply = (char *)(length + msglen + 1);
+        reply = (char *)malloc(length + msglen + 1);
+	if (reply == NULL ) {
+	xlog("===========>length: %d", length);
+}
         memset(reply, 0, length + msglen + 1);
         memcpy(reply, msg, msglen);
         memcpy(reply + msglen, data->buffer + 4, length);
