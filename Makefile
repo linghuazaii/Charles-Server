@@ -7,16 +7,26 @@ link=-L./depend/lib \
 	 -pthread
 
 cc=g++
-cppflags=-g -O0 -std=c++11
-cflags=-O3
+#cppflags=-g -O0 -std=c++11
+cppflags=-std=c++11 -fPIC
+cflags=-O3 -fPIC
 
 src=charles_server.o main.o threadpool.o
+so=./lib/libcharles_server.so.1
+lnso=./lib/libcharles_server.so
 bin=server
 
-all:$(bin)
+all:$(so) $(bin)
+
+$(so):$(src)
+	$(cc) -shared -fPIC -Wl,-soname,libcharles_server.so.1 $^ -o $@ $(link)
+	cp -rd depend/include/* include/
+	cp -rd depend/lib/* lib/
+	cp charles_server.h include/
+	cd lib && ln -s libcharles_server.so.1 libcharles_server.so
 
 $(bin):$(src)
-	$(cc) $^ -o $@ $(link)
+	g++ -I./include -L./lib -std=c++11 main.cpp -o $@ -ljson-c -lcharles_log -lcharles_server
 
 %.o:%.cpp
 	$(cc) $(include) $(cppflags) $^ -c -o $@ 
@@ -25,4 +35,4 @@ $(bin):$(src)
 	$(cc) $(include) $(cflags) $^ -c -o $@
 
 clean:
-	-rm -f $(src) $(bin)
+	-rm -f $(src) $(bin) $(so) $(lnso)
