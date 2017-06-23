@@ -155,7 +155,8 @@ void do_accept(void *arg) {
         ep_data->read_callback = charles_server_request_handler; /* callback for request */
         ep_data->write_callback = charles_server_response_handler; /* callback for response */
         event.data.ptr = ep_data;
-        ss_epoll_ctl(data->epfd, EPOLL_CTL_ADD, conn, &event);
+        if (-1 == ss_epoll_ctl(data->epfd, EPOLL_CTL_ADD, conn, &event))
+            LOG_ERROR("epoll_ctl failed in do_accept");
     }
 }
 
@@ -182,10 +183,11 @@ int get_socket_read_buffer_length(int fd) {
 void do_read(void *arg) {
     ep_data_t *data = (ep_data_t *)arg;
     int length = get_socket_read_buffer_length(data->eventfd);
-    if (length == 0 || length == -1) {
+    if (length == 0) {
         do_close(data);
         return;
-    }
+    } else if (length == -1)
+        return; /* fd has been closed */
     request_t *read_buffer = (request_t *)ss_malloc(sizeof(request_t));
     read_buffer->length = length;
     read_buffer->buffer = ss_malloc(length);
