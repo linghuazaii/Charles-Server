@@ -141,7 +141,8 @@ void do_accept(void *arg) {
             continue;
         }
         inet_ntop(AF_INET, &client.sin_addr, ip, IPLEN);
-        LOG_INFO("accept connection from %s, fd: %d", ip, conn);
+        //LOG_INFO("accept connection from %s, fd: %d", ip, conn);
+        printf("accept connection from %s, fd: %d", ip, conn);
 
         if (-1 == set_tcp_nodelay(conn))
             LOG_ERROR("set tcp nodelay failed for %d (%s)", conn, strerror(errno));
