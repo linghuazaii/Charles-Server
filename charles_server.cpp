@@ -210,8 +210,8 @@ void do_write(void *arg) {
         threadpool_add(charles_server->write_threadpool, do_write, resp, 0);
     } else {
         threadpool_add(charles_server->worker_threadpool, ep_data->write_callback, NULL, 0);
+        free_response(resp);
     }
-    free_response(resp);
 }
 
 void log_error(void *arg) {

@@ -23,6 +23,7 @@ $(so):$(src)
 	cp -rd depend/include/* include/
 	cp -rd depend/lib/* lib/
 	cp charles_server.h include/
+	cp config.h include/
 	cd lib && ln -s libcharles_server.so.1 libcharles_server.so
 
 $(bin):$(src)
