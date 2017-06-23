@@ -163,8 +163,8 @@ void do_accept(void *arg) {
 void do_close(void *arg) {
     ep_data_t *data = (ep_data_t *)arg;
     if (data != NULL) {
-        ss_epoll_ctl(data->epfd, EPOLL_CTL_DEL, data->eventfd, NULL);
-        close(data->eventfd);
+        if (-1 != ss_epoll_ctl(data->epfd, EPOLL_CTL_DEL, data->eventfd, NULL))
+            close(data->eventfd);
         ss_free(data);
     }
 }
