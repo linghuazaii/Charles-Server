@@ -26,12 +26,7 @@ void request_handler(void *req) {
 
 void http_request(void *req) {
     request_t *data = (request_t *)req;
-    const char *http_response = "\
-                                 HTTP/1.1 200 OK\r\n\
-                                 Server: nginx\r\n\
-                                 Date: Fri, 23 Jun 2017 02:28:43 GMT\r\n\
-                                 Connection: keep-alive\r\n\
-                                 \r\n";
+    const char *http_response = "|HTTP/1.1 200 OK\r\nServer: nginx\r\nConnection: keep-alive\r\n";
     response(data->connection, (void *)http_response, strlen(http_response));
     free_request(data);
 }
@@ -42,7 +37,8 @@ void response_cb(void *arg) {
 
 int main(int argc, char **argv) {
     //start_server(request_handler, response_cb);
-    start_server(http_request, response_cb);
+    //start_server(http_request, response_cb);
+    start_server(http_request, NULL);
 
     return 0;
 }

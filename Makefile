@@ -7,8 +7,7 @@ link=-L./depend/lib \
 	 -pthread
 
 cc=g++
-#cppflags=-g -O0 -std=c++11
-cppflags=-std=c++11 -fPIC
+cppflags=-std=c++11 -fPIC -O3
 cflags=-O3 -fPIC
 
 src=charles_server.o main.o threadpool.o

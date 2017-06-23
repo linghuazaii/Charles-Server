@@ -37,8 +37,7 @@
 
 #define IPLEN 32
 
-#define ss_malloc(size) calloc(1, size)
-#define ss_free(ptr) ss_free_imp((void **)&ptr)
+#define ss_malloc(size) malloc(size)
 
 #define abort(fmt, ...) do {\
     printf(fmt, ##__VA_ARGS__);\
@@ -57,10 +56,15 @@ typedef struct request_t {
 typedef request_t response_t;
 
 typedef struct ep_data_t {
+    ~ep_data_t() {
+        pthread_mutex_destroy(&ep_mtx);
+    }
     int epfd;
     int eventfd;
     void (*read_callback) (void *);
     void (*write_callback) (void *);
+    void *self;
+    pthread_mutex_t ep_mtx;
     void *extra;
 } ep_data_t;
 
