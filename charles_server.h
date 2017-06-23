@@ -56,16 +56,9 @@ typedef struct request_t {
 
 typedef request_t response_t;
 
-typedef struct ep_buffer_t {
-    uint32_t length;
-    void *buffer;
-    uint32_t count;
-} ep_buffer_t;
-
 typedef struct ep_data_t {
     int epfd;
     int eventfd;
-    ep_buffer_t ep_write_buffer;
     void (*read_callback) (void *);
     void (*write_callback) (void *);
     void *extra;

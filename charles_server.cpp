@@ -164,8 +164,6 @@ void do_close(void *arg) {
     if (data != NULL) {
         ss_epoll_ctl(data->epfd, EPOLL_CTL_DEL, data->eventfd, NULL);
         close(data->eventfd);
-        if (data->ep_write_buffer.buffer != NULL)
-            ss_free(data->ep_write_buffer.buffer);
         ss_free(data);
     }
 }
