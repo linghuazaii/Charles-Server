@@ -56,9 +56,6 @@ typedef struct request_t {
 typedef request_t response_t;
 
 typedef struct ep_data_t {
-    ~ep_data_t() {
-        pthread_mutex_destroy(&ep_mtx);
-    }
     int epfd;
     int eventfd;
     void (*read_callback) (void *);

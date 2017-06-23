@@ -164,6 +164,7 @@ void do_close(void *arg) {
         ep_data_t *temp = data;
         data->self = NULL;
         pthread_mutex_unlock(&data->ep_mtx);
+        pthread_mutex_destroy(&data->ep_mtx);
         free(temp->self);
     }
 }
