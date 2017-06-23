@@ -142,7 +142,7 @@ void do_accept(void *arg) {
         }
         inet_ntop(AF_INET, &client.sin_addr, ip, IPLEN);
         //LOG_INFO("accept connection from %s, fd: %d", ip, conn);
-        printf("accept connection from %s, fd: %d", ip, conn);
+        printf("accept connection from %s, fd: %d\n", ip, conn);
 
         if (-1 == set_tcp_nodelay(conn))
             LOG_ERROR("set tcp nodelay failed for %d (%s)", conn, strerror(errno));
@@ -151,6 +151,7 @@ void do_accept(void *arg) {
         //event.events = EPOLLIN | EPOLLOUT | EPOLLRDHUP; //shouldn't include EPOLLOUT '
         event.events = EPOLLIN | EPOLLET;
         ep_data_t *ep_data = (ep_data_t *)ss_malloc(sizeof(ep_data_t));
+        printf("new ep: %p\n", ep_data);
         ep_data->epfd = data->epfd;
         ep_data->eventfd = conn;
         ep_data->read_callback = charles_server_request_handler; /* callback for request */
@@ -163,10 +164,11 @@ void do_accept(void *arg) {
 
 void do_close(void *arg) {
     ep_data_t *data = (ep_data_t *)arg;
+    asm volatile ("mfence":::"memory");
     if (data != NULL) {
-        if (-1 != ss_epoll_ctl(data->epfd, EPOLL_CTL_DEL, data->eventfd, NULL))
-            close(data->eventfd);
+        printf("free ep: %p\n", data);
         ss_free(data);
+        asm volatile ("mfence":::"memory");
     }
 }
 
@@ -185,7 +187,9 @@ void do_read(void *arg) {
     ep_data_t *data = (ep_data_t *)arg;
     int length = get_socket_read_buffer_length(data->eventfd);
     if (length == 0) {
-        do_close(data);
+        if (-1 != ss_epoll_ctl(data->epfd, EPOLL_CTL_DEL, data->eventfd, NULL))
+            close(data->eventfd);
+        threadpool_add(charles_server->error_threadpool, do_close, (void *)data, 0);
         return;
     } else if (length == -1)
         return; /* fd has been closed */

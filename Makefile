@@ -24,7 +24,7 @@ $(so):$(src)
 	cp -rd depend/lib/* lib/
 	cp charles_server.h include/
 	cp config.h include/
-	cd lib && ln -s libcharles_server.so.1 libcharles_server.so
+	-cd lib && ln -s libcharles_server.so.1 libcharles_server.so
 
 $(bin):$(src)
 	g++ -I./include -L./lib -std=c++11 main.cpp -o $@ -ljson-c -lcharles_log -lcharles_server
